@@ -149,14 +149,23 @@ def sfx_shimmer(dur=2.0, root=74):
     y *= adsr(n, .25, dur * .7) * .09
     return reverb(np.stack([y, np.roll(y, 400)], 1), .55), 0
 
+def sfx_drone(dur=3.0):
+    n = T(dur + 1.0); t = secs(n); y = np.zeros(n)
+    for f, a in ((36.7, 1), (55, .6), (73.4, .35), (110.0 * 2 ** (1 / 12), .12)):   # low D/A cluster with a dark minor 2nd
+        y += np.sin(2 * np.pi * f * t + np.sin(2 * np.pi * .13 * t) * 2) * a
+    y += lp(noise(n), 220) * .6
+    y *= adsr(n, dur * .6, 1.2) * .35
+    return reverb(np.stack([y, np.roll(y, 300)], 1), .4), 0
+
 SFX = {'whoosh': lambda c: sfx_whoosh(c.get('dur', .5), c.get('amount', .8)), 'impact': lambda c: sfx_impact(c.get('amount', 1)),
        'riser': lambda c: sfx_riser(c.get('dur', 1.2)), 'click': lambda c: sfx_click(), 'pop': lambda c: sfx_pop(),
        'typing': lambda c: sfx_typing(c.get('dur', 1.3)), 'swarm': lambda c: sfx_swarm(c.get('dur', 1)), 'crack': lambda c: sfx_crack(c.get('dur', .45)),
-       'shatter': lambda c: sfx_shatter(), 'crt': lambda c: sfx_crt(c.get('dur', .3)), 'shimmer': lambda c: sfx_shimmer(c.get('dur', 2))}
-SFX_GAIN = {'whoosh': .55, 'impact': .9, 'riser': .5, 'click': .5, 'pop': .45, 'typing': .55, 'swarm': .45, 'crack': .6, 'shatter': .7, 'crt': .5, 'shimmer': .6}
+       'shatter': lambda c: sfx_shatter(), 'crt': lambda c: sfx_crt(c.get('dur', .3)), 'shimmer': lambda c: sfx_shimmer(c.get('dur', 2)), 'drone': lambda c: sfx_drone(c.get('dur', 3))}
+SFX_GAIN = {'whoosh': .55, 'impact': .9, 'riser': .5, 'click': .5, 'pop': .45, 'typing': .55, 'swarm': .45, 'crack': .6, 'shatter': .7, 'crt': .5, 'shimmer': .6, 'drone': .7}
 
 # ---------------------------------------------------------------- score
 PROG = [(62, [0, 4, 7, 11, 14]), (59, [0, 3, 7, 10, 14]), (55, [0, 4, 7, 11, 14]), (57, [0, 2, 7, 9, 14])]  # Dmaj9 Bm9 Gmaj9 A6sus
+PROG_DARK = [(57, [0, 3, 7, 10, 14]), (53, [0, 4, 7, 11, 14]), (60, [0, 4, 7, 11, 14]), (55, [0, 2, 7, 10, 14])]  # Am9 Fmaj9 Cmaj9 G9sus: wonder with an ache
 
 def level_curve(n, cues, dur):
     pts = [(0, .45)] + [(c['t'], c.get('level', .7)) for c in cues if c['type'] == 'score']
@@ -168,13 +177,13 @@ def level_curve(n, cues, dur):
     for i, (x, y) in enumerate(zip(xs, ys)): steps[T(x):] = y
     return lp(steps, 3) if len(pts) > 2 else lev
 
-def score(dur, cues, bpm=96):
+def score(dur, cues, bpm=96, prog=PROG):
     n = T(dur + 1.5); t = secs(n); beat = 60 / bpm; bar = beat * 4
     lev = level_curve(n, cues, dur)
     pad = np.zeros((n, 2)); pl = np.zeros((n, 2)); kick = np.zeros(n)
     nb = int(np.ceil((dur + 1.5) / bar))
     for b in range(nb):
-        root, ivs = PROG[b % len(PROG)]
+        root, ivs = prog[b % len(prog)]
         s0, L = T(b * bar), T(bar + 1.2)
         seg = np.zeros((L, 2)); tt = secs(L)
         for iv in ivs:
@@ -226,7 +235,8 @@ def main():
         if not f: continue
         snd, peak = f(c)
         place(sfx, snd * SFX_GAIN[c['type']] * c.get('gain', 1), c['t'] - peak)
-    bed = load(a.music)[:n] if a.music else score(dur, cues)[:n]
+    dark = data['meta'].get('mood') == 'dark'
+    bed = load(a.music)[:n] if a.music else score(dur, cues, bpm=78 if dark else 96, prog=PROG_DARK if dark else PROG)[:n]
     if len(bed) < n: bed = np.pad(bed, ((0, n - len(bed)), (0, 0)))
     vo = None
     if a.vo:
@@ -238,9 +248,10 @@ def main():
         speech = e > .08
         if speech.any():
             gap = band_rms(vo, speech) - band_rms(bed + sfx * .5, speech)
-            target = 11.0
+            target = 13.0
             bed *= db(np.clip(gap - target, -12, 12)); 
-            print(f'voice over bed (speech band): {gap:.1f} dB before, adjusted to ~{target} dB')
+            after = band_rms(vo, speech) - band_rms(bed * .8 + sfx, speech)
+            print(f'voice over bed+sfx (speech band): {gap:.1f} dB before, {after:.1f} dB after (target 8-14)')
     parts = {'sfx': sfx, 'score': bed, 'vo': vo if vo is not None else np.zeros_like(sfx)}
     mix = parts[stem] if stem in parts else bed * .8 + sfx + (vo * 1.0 if vo is not None else 0)
     mix = np.tanh(mix * 1.1) / 1.1          # gentle safety saturation

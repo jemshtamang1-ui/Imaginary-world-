@@ -41,6 +41,27 @@ director.js ──► main.js renderAt(t) ──► WebGL canvas (world + props,
   *hits*: a riser's `t` is the reveal it lands on; typing's `t` is its start), a whoosh for every
   whip/rush/wipe and a power-down for every crt, and an impact for every `^punch` word.
 
+## Night and space toolkit (`src/stars.js`)
+
+* **Starfield**: ~7,000 point stars at infinity (they follow the camera). Opacity defaults to the
+  palette's `stars`. In `run()`: `ctx.stars.set({ kill, wave, dir, revive, reviveDur, opacity })`:
+  stars die in a wave starting at `kill` (seconds), spreading over `wave` seconds outward from direction
+  `dir`, flaring just before they go; `revive` brings them back the same way. Use `kill: -100` for
+  "already gone".
+* **Glow** sprites (`props.glowA`, `props.glowB`): bright stars, flares, bursts. `set({ pos, size, intensity })`.
+* **Constellations** (`props.constellations`): invented patterns. `set({ pos, scale, draw, brk, t })`:
+  draw 0→1 draws the lines in, brk 0→1 breaks them apart and fades them out.
+* **LightPath** (`props.light`): star → dashed path → mini Earth, with a travelling light pulse and an
+  expanding wavefront shell. `set({ a, b, p, star, shell, earthSize, dashes, t, camera })`.
+* **World overrides** per frame via `ctx.world.fx`: `sunMul` (sky sun disc and glow, e.g. implode the sun),
+  `planetMul` (hide the space planet), `planetSun` (dim the planet's sunlight), `frost` (0..1 ice).
+* **Palettes**: `night` (moonlit cloud sea and stars), `empty` (the same world with no stars), `void` (space),
+  `earth` (space with the planet front-lit), `sunbeat` (big golden sun in frame). A palette can also be a
+  function, e.g. `(sp, lt) => blendPalette('sunbeat', 'empty', x)` to switch the lights off mid-shot.
+* **Glass stat card**: `ui.stat({ label, value, unit, sub, progress, dark })` for counters (years,
+  temperatures). `dark: true` is smoked glass for night scenes.
+* **Score mood**: return `mood: 'dark'` from `build()` for the minor-key, 78 bpm score.
+
 ## Commands
 
 ```bash
@@ -60,8 +81,8 @@ Preview interactively at `http://localhost:8123/?t=5` (space pauses, arrows seek
 
 * Cloud bake: about 1.5 s per card, 20 s for all 12.
 * Review still: 0.9–1.3 s each in one browser (page load about 4 s, paid once per tools_frames call).
-* Full render: about 1.2 s per frame per worker with 3 workers on 4 cores, so roughly 2.5 frames/s total.
-  A 15 s film at 60 fps is about 6 min; 46 s is about 18–20 min. More workers than cores-1 is slower.
+* Full render: about 1.9–2.2 s per frame per worker with 3 workers on 4 cores, so roughly 1.4 frames/s total.
+  A 14.6 s film at 60 fps took 12.7 min end to end; a 67 s film takes about 50 min.
 * Cost centres: the sea shader (three fbm evaluations per pixel), bloom mips, the 24-tap blur pass during
   whips/rushes, and large CSS blur filters on type. Exit and entrance blurs are short, so they're fine.
 
@@ -94,6 +115,18 @@ Preview interactively at `http://localhost:8123/?t=5` (space pauses, arrows seek
     environment map never reflects on them.
 13. **Atlas colour space.** The cloud atlas holds data (lighting/alpha), not colour: `NoColorSpace`.
     Palette hex values go through `THREE.Color`, which converts them to linear.
+
+14. **Text markup is per word.** `#No stars,#` breaks; write `#No# #stars,#`. A line's `size` applies to
+    the display words (serif/heavy/roman) when the line mixes styles, and to every word when the line is all
+    sans; `sansSize` sets the sans words in a mixed line.
+15. **Groups at the same position ghost.** When two groups share a spot, set the first group's
+    `out` ≥ 0.45 s before the second group's first word.
+16. **`fadeout` holds forever** unless you pass `until` (usually the next shot's start).
+17. **Planets lit from behind read as black discs.** Point the sun from the camera's side
+    (`earth` palette) and dim it with `planetSun`, rather than starting dark.
+18. **No Whisper model here.** Hugging Face is blocked, so for VO without a script, draft a transcript with
+    pocketsphinx recognition (`Decoder(); process_raw; hyp()`), correct it by ear and context, then
+    force-align with `align.py`. Check that alignment gaps match `silencedetect`.
 
 ## Re-rendering a range
 

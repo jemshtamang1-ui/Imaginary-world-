@@ -11,7 +11,7 @@ float fbm2(vec2 p, int oct){ float a=.5, s=0.; mat2 r = mat2(.8,.6,-.6,.8);
 `;
 
 const SKY_FS = /* glsl */`
-uniform vec3 top, horizon, below, sunCol, sunDir; uniform float sunSize, glow, stars;
+uniform vec3 top, horizon, below, sunCol, sunDir; uniform float sunSize, glow, stars, sunMul;
 varying vec3 vDir;
 float hs(vec3 p){ p = fract(p*vec3(443.897,441.423,437.195)); p += dot(p, p.yzx+19.19); return fract((p.x+p.y)*p.z); }
 void main(){
@@ -19,15 +19,11 @@ void main(){
   vec3 c = mix(horizon, top, pow(clamp(h, 0., 1.), .5));
   c = mix(c, below, smoothstep(0., -.08, h));
   float s = max(dot(d, sunDir), 0.);
-  c += sunCol * glow * (pow(s, 6.) * .18 + pow(s, 48.) * .45 + pow(s, 600.) * 1.2);
-  c += sunCol * smoothstep(1. - sunSize, 1. - sunSize * .5, s) * 12.;
-  if(stars > 0.){
-    vec3 g = floor(d * 420.); float r = hs(g);
-    float st = step(.9965, r) * (0.4 + 0.6*hs(g+1.7));
-    vec3 gd = normalize(g + .5); st *= smoothstep(.9995, 1., dot(gd, d)) ;
-    c += vec3(st) * stars * 3.5;
-    // faint milky band
-    c += vec3(.05,.06,.11) * stars * exp(-abs(dot(d, normalize(vec3(.3,1.,.2))))*7.);
+  c += sunCol * glow * sunMul * (pow(s, 6.) * .18 + pow(s, 48.) * .45 + pow(s, 600.) * 1.2);
+  c += sunCol * smoothstep(1. - sunSize, 1. - sunSize * .5, s) * 12. * sunMul * step(.00025, sunSize);
+  if(stars > 0.){                                            // faint milky band; point stars come from Starfield
+    float b = exp(-abs(dot(d, normalize(vec3(.3,1.,.2)))) * 7.);
+    c += vec3(.03,.035,.07) * stars * b;
   }
   gl_FragColor = vec4(c, 1.);
 }`;
@@ -99,7 +95,7 @@ void main(){
 
 const PLANET_VS = /* glsl */`varying vec3 vN, vW, vP; void main(){ vN = normalize(mat3(modelMatrix)*normal); vP = position; vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }`;
 const PLANET_FS = /* glsl */`
-uniform vec3 sunDir; uniform float time, opacity;
+uniform vec3 sunDir; uniform float time, opacity, frost, sunMul;
 varying vec3 vN, vW, vP;
 ${NOISE}
 void main(){
@@ -109,20 +105,27 @@ void main(){
   float land = smoothstep(.52, .56, fbm2(q * 1.3 + 2., 5));
   float cl = smoothstep(.5, .8, fbm2(q * 2.5 + vec2(time*.01, 0.), 5));
   vec3 base = mix(vec3(.02,.09,.22), vec3(.16,.26,.12), land);
-  base = mix(base, vec3(.95), cl * .85);
+  float ice = smoothstep(0., .12, frost * 1.35 - (1. - abs(sphereV)) * .9 + (fbm2(q * 2. + 7., 4) - .5) * .5);
+  base = mix(base, vec3(.78, .87, .97) * (.7 + .45 * fbm2(q * 7. + 3., 4)), ice);
+  base = mix(base, vec3(.95), cl * .85 * (1. - ice * .6));
   float dl = dot(n, sunDir);
-  float day = smoothstep(-.08, .25, dl);
-  vec3 c = base * day * 1.6;
+  float day = smoothstep(-.08, .25, dl) * sunMul;
+  vec3 c = base * day * 1.6 + base * vec3(.05, .07, .12) * (1. - sunMul) * (.4 + ice);
   float fr = pow(1. - max(dot(n, v), 0.), 3.);
-  c += vec3(.25,.55,1.2) * fr * smoothstep(-.25, .3, dl) * 1.8;
+  c += mix(vec3(.25,.55,1.2), vec3(.6,.75,1.), ice) * fr * (smoothstep(-.25, .3, dl) * sunMul + (1. - sunMul) * .12) * 1.8;
   gl_FragColor = vec4(c, opacity);
 }`;
 const ATMO_FS = /* glsl */`
-uniform vec3 sunDir; uniform float opacity; varying vec3 vN, vW, vP;
+uniform vec3 sunDir; uniform float opacity, sunMul; varying vec3 vN, vW, vP;
 void main(){ vec3 n = normalize(vN); vec3 v = normalize(cameraPosition - vW);
   float rim = pow(1. - abs(dot(n, v)), 2.5);
-  float lit = smoothstep(-.3, .35, dot(n, sunDir));
+  float lit = smoothstep(-.3, .35, dot(n, sunDir)) * sunMul + (1. - sunMul) * .1;
   gl_FragColor = vec4(vec3(.35,.62,1.25) * rim * lit * 2.2, rim * lit * opacity); }`;
+
+// planet material for other props (e.g. the mini Earth in the light-travel diagram)
+export function makePlanetMat(uniforms) {
+  return new THREE.ShaderMaterial({ uniforms, vertexShader: PLANET_VS, fragmentShader: PLANET_FS, transparent: true });
+}
 
 export class World {
   constructor(scene, atlasTex, atlasInfo) {
@@ -133,12 +136,12 @@ export class World {
       sunDir: { value: new THREE.Vector3(0, .2, 1) }, sunSize: { value: .0015 }, glow: { value: 1 }, stars: { value: 0 },
       lit: { value: col() }, shadow: { value: col() }, fogCol: { value: col() }, fogDensity: { value: .00008 },
       seaLit: { value: col() }, seaShadow: { value: col() }, time: { value: 0 }, silver: { value: .5 },
-      hide: { value: 0 }, opacity: { value: 1 }, planetOpacity: { value: 0 },
+      hide: { value: 0 }, opacity: { value: 1 }, planetOpacity: { value: 0 }, sunMul: { value: 1 }, frost: { value: 0 }, planetSun: { value: 1 },
     };
     const u = this.u;
     // sky
     const sky = new THREE.Mesh(new THREE.SphereGeometry(50000, 48, 24), new THREE.ShaderMaterial({
-      uniforms: { top: u.top, horizon: u.horizon, below: u.below, sunCol: u.sunCol, sunDir: u.sunDir, sunSize: u.sunSize, glow: u.glow, stars: u.stars },
+      uniforms: { top: u.top, horizon: u.horizon, below: u.below, sunCol: u.sunCol, sunDir: u.sunDir, sunSize: u.sunSize, glow: u.glow, stars: u.stars, sunMul: u.sunMul },
       vertexShader: `varying vec3 vDir; void main(){ vDir = position; vec4 p = projectionMatrix*viewMatrix*vec4(position + cameraPosition, 1.); gl_Position = p.xyww; }`,
       fragmentShader: SKY_FS, side: THREE.BackSide, depthWrite: false }));
     sky.renderOrder = -10; sky.frustumCulled = false; scene.add(sky);
@@ -165,7 +168,7 @@ export class World {
     this.clouds.frustumCulled = false; this.clouds.renderOrder = 1;
     scene.add(this.clouds);
     // planet for the space beat
-    const pu = { sunDir: u.sunDir, time: u.time, opacity: u.planetOpacity };
+    const pu = { sunDir: u.sunDir, time: u.time, opacity: u.planetOpacity, frost: u.frost, sunMul: u.planetSun };
     this.planet = new THREE.Group();
     this.planet.add(new THREE.Mesh(new THREE.SphereGeometry(6000, 128, 64), new THREE.ShaderMaterial({ uniforms: pu, vertexShader: PLANET_VS, fragmentShader: PLANET_FS, transparent: true })));
     this.planet.add(new THREE.Mesh(new THREE.SphereGeometry(6260, 128, 64), new THREE.ShaderMaterial({ uniforms: pu, vertexShader: PLANET_VS, fragmentShader: ATMO_FS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.BackSide })));
@@ -216,7 +219,10 @@ export class World {
     u.hide.value = space > .5 ? 1 : 0;
     u.opacity.value = 1 - space;
     this.clouds.visible = space < .99;
-    this.planet.visible = space > .01; u.planetOpacity.value = space;
+    const fx = this.fx || {};
+    u.sunMul.value = fx.sunMul ?? 1; u.frost.value = fx.frost ?? 0; u.planetSun.value = fx.planetSun ?? 1;
+    const pm = fx.planetMul ?? 1;
+    this.planet.visible = space * pm > .01; u.planetOpacity.value = space * pm;
     this.sun.color.set(p.sun); this.sun.position.copy(camera.position).addScaledVector(u.sunDir.value, 100); this.sun.target.position.copy(camera.position);
     this.hemi.color.set(p.skyTop).lerp(new THREE.Color('#ffffff'), .45); this.hemi.groundColor.set(p.seaShadow).lerp(new THREE.Color(p.cloudLit), .5);
     this.#sort(camera);

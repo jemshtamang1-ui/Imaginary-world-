@@ -59,3 +59,15 @@ html, body { margin: 0; background: #0b0d12; overflow: hidden; }
 .card .likes { margin-top: 14px; font-size: 26px; color: rgba(16,22,42,.55); font-weight: 600; }
 .card .likes b { color: var(--accent); }
 .wipeimg { position: absolute; will-change: transform; }
+
+.stat { padding: 30px 40px 32px; border-radius: 36px; min-width: 440px; }
+.stat .lbl { font-size: 24px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .6; }
+.stat .row { display: flex; align-items: baseline; gap: 14px; margin-top: 6px; }
+.stat .val { font-family: 'Inter Tight'; font-weight: 800; font-size: 104px; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .unit { font-size: 38px; font-weight: 600; opacity: .75; }
+.stat .sub { font-size: 26px; font-weight: 500; opacity: .6; margin-top: 8px; }
+.stat .bar { margin-top: 20px; height: 12px; border-radius: 6px; background: rgba(16,22,42,.12); overflow: hidden; }
+.stat .bar i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, #FF8A5C, var(--accent)); }
+.glass.dark { background: rgba(14,20,44,.42); border-color: rgba(255,255,255,.22); color: #fff;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18); }
+.glass.dark .bar { background: rgba(255,255,255,.14); }

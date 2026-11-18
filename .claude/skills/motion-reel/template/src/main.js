@@ -5,7 +5,8 @@
 // Preview in a browser: http://localhost:8123/?t=3  (space = pause, arrows = seek, , . = frame step)
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { World } from './world.js';
+import { World, makePlanetMat } from './world.js';
+import { Starfield, Glow, Constellations, LightPath } from './stars.js';
 import { Post } from './post.js';
 import { evalFx } from './fx.js';
 import { TextLayer } from './text.js';
@@ -53,6 +54,10 @@ const world = new World(scene, atlasTex, atlasInfo);
 const post = new Post(renderer, scene, camera, W, H);
 const props = new Props(scene);
 const ui = new Glass(uiEl);
+const stars = new Starfield(); scene.add(stars.points);
+props.add(scene, 'constellations', new Constellations());
+props.add(scene, 'light', new LightPath(makePlanetMat));
+props.add(scene, 'glowA', new Glow('#fff1d6')); props.add(scene, 'glowB', new Glow('#cfe0ff'));
 const D = (await import('./director.js')).build({ words, W, H, THREE, props, scene });
 const text = new TextLayer(typeEl, D.texts, words);
 text.layout(W, H);
@@ -75,12 +80,14 @@ function renderAt(t) {
   camera.up.set(0, 1, 0); camera.lookAt(tmpLook); camera.rotateZ((c.roll ?? 0) + drift(t, 6, .004 * hh));
   camera.updateMatrixWorld();
   props.begin(); ui.begin();
+  world.fx = {}; stars.reset(t, pal.stars, H / 1080 * 1.7);
   // near(x, y, z): a point in front of the camera for props. Props are ~10 units away while the camera
   // travels hundreds of units for cloud parallax, so they ride with the camera, sliding back by a small
   // fraction of its travel to read as objects hanging in the same space.
   const c0 = shot.cam(0, 0, shot.t0);
   const near = (x, y, z, parallax = .012) => ahead(c, x, y, z).map((v, i) => v - (c.pos[i] - c0.pos[i]) * parallax);
-  shot.run?.({ props, ui, camera, THREE, W, H, pal, shot, near }, lt, sp, t);
+  shot.run?.({ props, ui, camera, THREE, W, H, pal, shot, near, world, stars }, lt, sp, t);
+  stars.apply();
   ui.end();
   world.update(t, camera, pal);
   renderer.toneMappingExposure = pal.exposure;
@@ -121,7 +128,7 @@ function cues() {
 
 window.__render = (t) => { renderAt(t); return true; };
 window.__cues = cues;
-window.__meta = { duration: D.duration, fps: D.fps || 60, w: W, h: H, title: D.title };
+window.__meta = { duration: D.duration, fps: D.fps || 60, w: W, h: H, title: D.title, mood: D.mood || 'bright' };
 window.__dbg = { props, camera, scene, world, D };
 window.__ready = true;
 

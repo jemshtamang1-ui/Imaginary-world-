@@ -55,5 +55,16 @@ export class Glass {
     el.querySelector('.likes').innerHTML = likes ? `<b>♥</b> ${escape(likes)}` : '';
     pose(el, { x, y, inP, outP, anchor, extra: `rotate(${tilt}deg)` });
   }
+  // big-number stat card: label, value + unit, optional progress bar. dark: smoked glass for night scenes
+  stat({ key = 'stat', x, y, inP = 1, outP = 0, label = '', value = '', unit = '', sub = '', progress = null, anchor = 'center', dark = false, w = null }) {
+    const el = this.#el(key, 'stat', `<div class="lbl"></div><div class="row"><span class="val"></span><span class="unit"></span></div><div class="sub"></div><div class="bar"><i></i></div>`);
+    el.classList.toggle('dark', dark);
+    if (w) el.style.width = w + 'px';
+    el.querySelector('.lbl').textContent = label; el.querySelector('.val').textContent = value; el.querySelector('.unit').textContent = unit;
+    el.querySelector('.sub').textContent = sub; el.querySelector('.sub').style.display = sub ? '' : 'none';
+    const bar = el.querySelector('.bar'); bar.style.display = progress == null ? 'none' : '';
+    if (progress != null) bar.firstChild.style.width = (clamp(progress) * 100).toFixed(2) + '%';
+    pose(el, { x, y, inP, outP, anchor });
+  }
 }
 const escape = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));

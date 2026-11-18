@@ -11,6 +11,7 @@ licensing questions. It reads `work/cues.json` (written by `node tools/export_cu
 * **Arrangement follows the edit** through `{t, type: 'score', level}` cues (0..1): below 0.25 it's pad
   only (use this for a hush, such as the space beat), plucks fade in from 0.25–0.75, and the kick comes
   in above 0.6. Drop the level right before a big reveal and slam it to 1 on the reveal.
+* `mood: 'dark'` from the director switches to `PROG_DARK` (Am9 → Fmaj9 → Cmaj9 → G9sus, 78 bpm).
 * Change key or progression in `PROG` (MIDI root, intervals). Change tempo with `score(..., bpm=)`.
   Keep cuts musical: put big reveals on bar lines where you can (bar = 2.5 s at 96 bpm).
 
@@ -29,14 +30,15 @@ licensing questions. It reads `work/cues.json` (written by `node tools/export_cu
 | `shatter` | the break | noise burst, 40 glass tinkles, impact | the shatter |
 | `crt` | collapse start | descending tone, mains buzz | CRT collapse (auto) |
 | `shimmer` | start | high chord cluster with tremolo | title cards, magic moments |
+| `drone` | start | low cluster with a dark minor second, swelling | dread, emptiness, "terrifying" beats |
 
 Any cue takes `gain` (linear). Per-type gains are in `SFX_GAIN`.
 
 ## Mix targets and how to measure
 
 * **Voice 8–14 dB over the bed in the speech band** (300–3400 Hz) while speaking. With `--vo`, sound.py
-  ducks the bed up to 8 dB with a voice-envelope sidechain, measures that gap, trims the bed to about
-  11 dB, and prints the before value.
+  ducks the bed up to 8 dB with a voice-envelope sidechain, measures that gap, trims the bed toward 13 dB,
+  and prints the gap before and after (impacts on punch words keep the final figure lower, about 9 dB).
 * **Loudness:** render.sh does two-pass `loudnorm` to −14 LUFS integrated, −1 dBTP. Check with
   `ffmpeg -i out.mp4 -af ebur128=peak=true -f null -` (look at I and Peak in the summary).
 * **Shape check without ears:** a spectrogram shows every SFX as a vertical event, so mistimed cues stand out:

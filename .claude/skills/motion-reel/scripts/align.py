@@ -50,7 +50,7 @@ out = []
 for i, s in enumerate(segs):
     w = re.sub(r'\(\d+\)$', '', s.word)
     display = raw_words[i] if i < len(raw_words) else w
-    out.append({'w': re.sub(r"[.,!?;:…]+$", '', display), 't0': round(s.start / 100, 3), 't1': round((s.end + 1) / 100, 3)})
+    out.append({'w': re.sub(r"[.,!?;:…]+$", '', display), 't0': round(s.start_frame / 100, 3), 't1': round((s.end_frame + 1) / 100, 3)})
 json.dump(out, open(a.out, 'w'), indent=0)
 print(f'wrote {a.out}: {len(out)} words, {out[0]["t0"] if out else 0:.2f}s - {out[-1]["t1"] if out else 0:.2f}s')
 gaps = [(out[i]['t1'], out[i + 1]['t0']) for i in range(len(out) - 1) if out[i + 1]['t0'] - out[i]['t1'] > .25]

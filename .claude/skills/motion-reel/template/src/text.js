@@ -4,7 +4,7 @@
 //   #word#   heavy grotesk (Inter Tight 800)     plain   Inter
 //   +word    accent colour (once per beat)       ^word   punch: scales in from 1.35x
 //   word@1.23  explicit time (only when there is no words.json)
-// Lines may be objects { text, size } to override the font size of every word in the line.
+// Lines may be objects { text, size, sansSize }: size sets display words (or every word if the line is all sans).
 // Word times come from words.json: each displayed word is matched, in order, to the next spoken word.
 import { clamp, inv, expoOut, cubicIn, rgba } from './lib.js';
 
@@ -56,7 +56,10 @@ export class TextLayer {
           const span = document.createElement('span');
           span.className = `word ${w.style}${w.accent ? ' accent' : ''}${g.dark ? ' dark' : ''}`;
           span.textContent = w.text;
-          if (l.size) span.style.fontSize = l.size + 'px';
+          // line size: applies to display words (serif/heavy/roman) when the line mixes styles, else to all
+          const mixed = l.words.some((x) => x.style !== 'sans');
+          if (l.size && (!mixed || w.style !== 'sans')) span.style.fontSize = l.size + 'px';
+          if (mixed && w.style === 'sans' && l.sansSize) span.style.fontSize = l.sansSize + 'px';
           le.appendChild(span); w.el = span;
         }
       }

@@ -47,6 +47,7 @@ export function evalFx(t, list) {
         break;
       }
       case 'fadeout': {         // fade to black (or e.color) over dur and hold
+        if (t >= (e.until ?? Infinity)) break;   // release at e.until (e.g. the next shot's start)
         const a = smooth(inv(e.t, e.t + d, t)); if (a > s.dark) s.dark = a; break;
       }
       case 'wipe': {            // foreground cloud bank sweeping across, fully covering at e.t

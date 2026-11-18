@@ -235,7 +235,7 @@ export class Island {
     this.group.visible = true;
     this.group.position.set(pos[0], pos[1] + Math.sin(t * 1.1) * .12, pos[2]);
     this.group.rotation.set(rot[0], rot[1] + t * .08, rot[2]); this.group.scale.setScalar(scale);
-    this.lamp.material.color.setScalar(.6 + lamp * 1.8);
+    this.lamp.material.color.setScalar(.04 + lamp * 2.4);
     for (const b of this.bits) b.m.position.set(Math.cos(b.a + t * b.s) * b.d, b.y + Math.sin(t + b.a) * .15, Math.sin(b.a + t * b.s) * b.d);
   }
 }
