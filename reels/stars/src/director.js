@@ -40,8 +40,8 @@ export function build({ words }) {
     } });
   fx.push({ t: 6.85, type: 'whip', dir: -1, dur: .3, amount: 300 });
   fx.push({ t: gone, type: 'flash', dur: .35, amount: .55, attack: .02 }, { t: gone, type: 'shake', dur: .5, amount: 14 });
-  texts.push({ x: .5, y: .2, align: 'center', out: gone - .25, lines: [{ text: 'I mean every +*star.*', size: 120 }] });
-  texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 10.3, scrim: 0, lines: [{ text: '^+*Gone.*', size: 320 }, { text: 'Just like that.', size: 60 }] });
+  texts.push({ x: .5, y: .2, align: 'center', out: gone - .25, lines: [{ text: 'I mean every +*star!*', size: 120 }] });
+  texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 10.3, scrim: 0, lines: [{ text: '^+*Gone!*', size: 320 }, { text: 'Just like that!', size: 60 }] });
   cues.push({ t: gone, type: 'riser', dur: 1.5, gain: .8 });
   score(gone, .12);
 
@@ -70,7 +70,7 @@ export function build({ words }) {
       ui.stat({ key: 'sky', x: W * .74, y: H * .52, dark: true, inP: inv(17.75, 18.25, t), outP: inv(19.55, 19.8, t), label: 'Stars visible tonight', value: fmt(9096), sub: 'Nothing has changed… yet' });
     } });
   fx.push({ t: 17.6, type: 'flash', dur: .3, amount: .7, color: '#dfe8ff' });
-  texts.push({ x: .075, y: .3, out: 19.6, lines: [{ text: "We wouldn't notice it", size: 58 }, { text: '+*immediately.*', size: 200 }] });
+  texts.push({ x: .075, y: .3, out: 19.6, lines: [{ text: "You wouldn't even notice", size: 58 }, { text: '+*immediately!*', size: 200 }] });
   cues.push({ t: 17.8, type: 'pop' });
 
   // ---------------------------------------------------------------- 7. "You see, light takes time to travel through space."
@@ -115,7 +115,7 @@ export function build({ words }) {
   fx.push({ t: 28.6, type: 'flash', dur: .3, amount: .4, color: '#fff3dc' });
   fx.push({ t: dis2, type: 'punch', amount: .03, dur: .5 });
   texts.push({ x: .075, y: .12, out: 30.42, lines: [{ text: 'So even if those stars', size: 58 }, { text: '+*disappeared,*', size: 200 }] });
-  texts.push({ x: .075, y: .12, out: 33.72, lines: [{ text: 'we could still see their +*light*', size: 190 }, { text: 'traveling towards Earth.', size: 56 }] });
+  texts.push({ x: .075, y: .12, out: 33.72, lines: [{ text: 'we could still see their +*light*', size: 190 }, { text: 'travelling towards Earth!', size: 56 }] });
   cues.push({ t: dis2, type: 'impact', amount: .5 }, { t: earth, type: 'shimmer', dur: 1.2, gain: .6 });
 
   // ---------------------------------------------------------------- 10. "But imagine the moment that final light disappears."
@@ -143,7 +143,7 @@ export function build({ words }) {
       props.constellations.set({ pos: near(.2, -1.3, -14), scale: 1.05, draw: inv(37.62, noStars + .5, t), brk: inv(noCon + .1, noCon + 1.4, t), t });
     } });
   fx.push({ t: 37.6, type: 'flash', dur: .25, amount: .3, color: '#cfe0ff' });
-  texts.push({ x: .5, y: .1, align: 'center', out: 40.25, lines: [{ text: '^#No# #stars,#', size: 110 }, { text: 'no constellations,', size: 60 }] });
+  texts.push({ x: .5, y: .1, align: 'center', out: 40.25, lines: [{ text: '^#No# #stars.#', size: 110 }, { text: 'No constellations.', size: 60 }] });
   texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 43.62, scrim: 0, lines: [{ text: 'just an endless,', size: 58 }, { text: '*terrifying*', size: 240 }, { text: '+#black# #sky.#', size: 130 }] });
   cues.push({ t: just, type: 'drone', dur: 3.4 });
   score(just, .08);
@@ -154,13 +154,13 @@ export function build({ words }) {
     cam: move({ pos: [0, 120, 1300], look: [-650, 300, -3000], fov: 42 }, { pos: [0, 260, 820], look: [-650, 330, -3000], fov: 38 }, quintOut) });
   fx.push({ t: 43.85, type: 'flash', dur: .6, color: '#fff1dc' }, { t: 43.85, type: 'rush', dur: .3, amount: .12, sound: false });
   texts.push({ x: .075, y: .2, out: 45.55, lines: [{ text: "And here's something even", size: 58 }, { text: '+*crazier.*', size: 230 }] });
-  texts.push({ x: .075, y: .2, out: 47.78, lines: [{ text: 'Our +*Sun*', size: 250 }, { text: 'is a star too.', size: 60 }] });
+  texts.push({ x: .075, y: .2, out: 47.78, lines: [{ text: 'Our +*Sun*', size: 250 }, { text: 'is a star too!', size: 60 }] });
   cues.push({ t: 43.85, type: 'riser', dur: 1.6 }, { t: 43.85, type: 'impact', amount: 1 }, { t: 43.9, type: 'shimmer', dur: 2.4 }, { t: sun, type: 'impact', amount: .4 });
   score(43.85, .9);
 
   // ---------------------------------------------------------------- 13. "If the Sun disappeared as well,"
   const dis4 = w('disappeared', 48.5);
-  shots.push({ name: 'sun out', t0: 47.95, t1: 50.0, palette: (sp, lt) => blendPalette('sunbeat', 'empty', smooth(inv(dis4, dis4 + 1.0, 47.95 + lt))), bloom: .45,
+  shots.push({ name: 'sun out', t0: 47.95, t1: 49.95, palette: (sp, lt) => blendPalette('sunbeat', 'empty', smooth(inv(dis4, dis4 + 1.0, 47.95 + lt))), bloom: .45,
     cam: move({ pos: [1600, 180, 600], look: [960, 330, -3000], fov: 40 }, { pos: [1580, 200, 450], look: [940, 320, -3000], fov: 37 }),
     run({ world }, lt, sp, t) {
       world.fx.sunMul = t < dis4 ? 1 + .8 * cubicIn(inv(dis4 - .6, dis4, t)) : 1.8 * (1 - expoOut(inv(dis4, dis4 + .18, t)));
@@ -171,67 +171,84 @@ export function build({ words }) {
   cues.push({ t: dis4, type: 'riser', dur: .9, gain: .7 });
   score(dis4, .2);
 
+
+  // ---------------------------------------------------------------- 13b. time skip: the last sunlight is still on its way (sound: narrator clip in vo_final.wav)
+  shots.push({ name: 'few minutes later', t0: 49.95, t1: 51.9, palette: 'void',
+    cam: move({ pos: [0, 0, 0], look: [0, -20, -1000], fov: 42 }, { pos: [-40, 3, -36], look: [-40, -12, -1000], fov: 39 }),
+    run({ world, stars, props, near, camera, ui, W, H }, lt, sp, t) {
+      world.fx.planetMul = 0; stars.set({ opacity: 0 });
+      const p = cubicInOut(inv(50.0, 51.75, t)), arrive = inv(51.6, 51.85, t);
+      props.light.set({ a: near(-7.2, -.9, -17), b: near(6.6, -1.3, -14), p: p * .999, star: 0, earthSize: .95, t, dashes: .5, camera });
+      props.light.pu.sunMul.value = 1 - smooth(arrive);
+      props.glowA.set({ pos: near(-7.2, -.9, -17), size: 1.6, intensity: .08 * (1 - sp) });   // ghost of where the Sun was
+      const secs = 500 * cubicInOut(inv(50.05, 51.7, t));
+      ui.stat({ key: 'sunlight', x: W / 2, y: H * .8, dark: true, inP: inv(50.0, 50.4, t), outP: inv(51.65, 51.9, t), label: "Sunlight's travel time to Earth",
+        value: `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`, unit: 'min', progress: secs / 500, w: 660 });
+    } });
+  fx.push({ t: 49.95, type: 'whip', dir: 1, dur: .28, amount: 260 });
+  texts.push({ x: .5, y: .13, align: 'center', out: 51.55, lines: [{ text: '*A*@50.1 *few*@50.24 +*minutes*@50.42 *later…*@50.82', size: 150 }] });
+
   // ---------------------------------------------------------------- 14. "Earth would lose its main source of light and heat."
-  const earthL = 50.08;
-  shots.push({ name: 'earth dims', t0: 50.0, t1: 52.85, palette: 'earth',
+  const earthL = 51.98;
+  shots.push({ name: 'earth dims', t0: 51.9, t1: 54.75, palette: 'earth',
     cam: move({ pos: [-1800, -3500, 7600], look: [-6200, -6100, -9000], fov: 40 }, { pos: [-1500, -3650, 6900], look: [-6000, -6150, -9000], fov: 39 }),
     run({ world, stars }, lt, sp, t) {
-      stars.set({ opacity: .25 * (1 - inv(50.2, 52.6, t)) });
-      world.fx.planetSun = 1 - .93 * smooth(inv(50.5, 52.5, t));
+      stars.set({ opacity: .25 * (1 - inv(52.1, 54.5, t)) });
+      world.fx.planetSun = 1 - .93 * smooth(inv(52.4, 54.4, t));
     } });
-  fx.push({ t: 50.0, type: 'dark', dur: .02, fade: .45, sound: false });
-  texts.push({ x: .075, y: .22, out: 52.62, lines: [{ text: 'Earth would lose its', size: 58 }, { text: 'main source of', size: 58 }, { text: '*light* and +*heat.*', size: 200 }] });
-  cues.push({ t: 50.08, type: 'whoosh', dur: .7, amount: .6 });
+  fx.push({ t: 51.9, type: 'dark', dur: .02, fade: .45, sound: false });
+  texts.push({ x: .075, y: .22, out: 54.52, lines: [{ text: 'Earth would lose its', size: 58 }, { text: 'main source of', size: 58 }, { text: '*light* and +*heat.*', size: 200 }] });
+  cues.push({ t: 51.98, type: 'whoosh', dur: .7, amount: .6 });
 
   // ---------------------------------------------------------------- 15. "Temperatures would begin falling, and life as we know it would face a disaster."
-  const disaster = w('disaster', 56);
-  shots.push({ name: 'freeze', t0: 52.85, t1: 57.45, palette: 'earth',
+  const disaster = w('disaster', 57.9);
+  shots.push({ name: 'freeze', t0: 54.75, t1: 59.35, palette: 'earth',
     cam: move({ pos: [-2400, -3000, 11500], look: [-7800, -6000, -9000], fov: 40 }, { pos: [-2200, -3100, 10200], look: [-7600, -6100, -9000], fov: 38 }),
     run({ world, ui, W, H }, lt, sp, t) {
-      world.fx.planetSun = .4 - .15 * inv(53, 57.4, t); world.fx.frost = smooth(inv(53.0, 57.3, t)) * .74;
-      const temp = lerp(15, -73, cubicInOut(inv(53.1, 57.2, t)));
-      ui.stat({ key: 'temp', x: W * .075, y: H * .8, anchor: 'left', dark: true, inP: inv(53.0, 53.5, t), outP: inv(57.15, 57.4, t), label: 'Average surface temperature', value: `${temp > 0 ? '+' : temp < -0.5 ? '−' : ''}${Math.abs(Math.round(temp))}`, unit: '°C', progress: inv(-73, 15, temp) });
+      world.fx.planetSun = .4 - .15 * inv(54.9, 59.3, t); world.fx.frost = smooth(inv(54.9, 59.2, t)) * .74;
+      const temp = lerp(15, -73, cubicInOut(inv(55, 59.1, t)));
+      ui.stat({ key: 'temp', x: W * .075, y: H * .8, anchor: 'left', dark: true, inP: inv(54.9, 55.4, t), outP: inv(59.05, 59.3, t), label: 'Average surface temperature', value: `${temp > 0 ? '+' : temp < -0.5 ? '−' : ''}${Math.abs(Math.round(temp))}`, unit: '°C', progress: inv(-73, 15, temp) });
     } });
-  fx.push({ t: 52.85, type: 'rush', dur: .3, amount: .1 });
+  fx.push({ t: 54.75, type: 'rush', dur: .3, amount: .1 });
   fx.push({ t: disaster, type: 'shake', dur: .5, amount: 14 }, { t: disaster, type: 'flash', dur: .25, amount: .3, color: '#dbe8ff', attack: .02 });
-  texts.push({ x: .075, y: .14, out: 54.35, lines: [{ text: 'Temperatures would begin', size: 58 }, { text: '+*falling,*', size: 220 }] });
-  texts.push({ x: .075, y: .14, out: 57.2, lines: [{ text: 'and life as we know it', size: 58 }, { text: 'would face a', size: 58 }, { text: '^#disaster.#', size: 150 }] });
-  cues.push({ t: 53.1, type: 'drone', dur: 4.2, gain: .6 }, { t: 53.05, type: 'pop' });
-  score(52.85, .35);
+  texts.push({ x: .075, y: .14, out: 56.25, lines: [{ text: 'Temperatures would begin', size: 58 }, { text: '+*falling,*', size: 220 }] });
+  texts.push({ x: .075, y: .14, out: 59.1, lines: [{ text: 'and life as we know it', size: 58 }, { text: 'would face a', size: 58 }, { text: '^#disaster.#', size: 150 }] });
+  cues.push({ t: 55, type: 'drone', dur: 4.2, gain: .6 }, { t: 54.95, type: 'pop' });
+  score(54.75, .35);
 
   // ---------------------------------------------------------------- 16. "So let me ask you."
-  shots.push({ name: 'ask', t0: 57.45, t1: 59.1, palette: 'night',
+  shots.push({ name: 'ask', t0: 59.35, t1: 61, palette: 'night',
     cam: move({ pos: [2400, 200, 1400], look: [2000, 900, -2000], fov: 40 }, { pos: [2400, 230, 1250], look: [2000, 960, -2000], fov: 37 }) });
-  fx.push({ t: 57.3, type: 'dark', dur: .1, fade: .45, sound: false });
-  texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 58.95, lines: [{ text: 'So let me', size: 60 }, { text: '+*ask* *you.*', size: 250 }] });
-  score(57.45, .45);
+  fx.push({ t: 59.2, type: 'dark', dur: .1, fade: .45, sound: false });
+  texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 60.85, lines: [{ text: 'So let me', size: 60 }, { text: '+*ask* *you.*', size: 250 }] });
+  score(59.35, .45);
 
   // ---------------------------------------------------------------- 17. "Would you be able to sleep peacefully, knowing that the entire universe above you had gone dark?"
-  const dark2 = w('dark', 63.5), had = w('had', 63.3);
+  const dark2 = w('dark', 65.4), had = w('had', 65.2);
   const c17a = { pos: [-600, 230, 2600], look: [-700, 700, -1000], fov: 40 }, c17b = { pos: [-610, 260, 2450], look: [-710, 760, -1000], fov: 38 };
-  shots.push({ name: 'sleep', t0: 59.1, t1: 64.9, palette: (sp, lt) => blendPalette('night', 'empty', smooth(inv(had, dark2 + .6, 59.1 + lt))), cam: move(c17a, c17b),
+  shots.push({ name: 'sleep', t0: 61, t1: 66.8, palette: (sp, lt) => blendPalette('night', 'empty', smooth(inv(had, dark2 + .6, 61 + lt))), cam: move(c17a, c17b),
     run({ props, stars, near }, lt, sp, t) {
       stars.set({ kill: had + .05, wave: .7, dir: [0, .5, -1] });
       props.island.set({ pos: near(3.6, -1.35, -14), rot: [.06, -.5, 0], scale: 1.0, t, lamp: 1 - smooth(inv(dark2, dark2 + .2, t)) });
       props.glowA.set({ pos: near(3.6 - .4 * .87, -1.35 + 1.56, -14 + .2), size: 1.6, intensity: (1 - smooth(inv(dark2, dark2 + .2, t))) * 1.1 });
     } });
-  fx.push({ t: 59.1, type: 'whip', dir: -1, dur: .3, amount: 280 });
-  texts.push({ x: .075, y: .16, out: 60.98, lines: [{ text: 'Would you be able to', size: 58 }, { text: '+*sleep* *peacefully,*', size: 180 }] });
-  texts.push({ x: .075, y: .16, out: 64.45, lines: [{ text: 'knowing that the entire', size: 58 }, { text: 'universe above you', size: 58 }, { text: 'had gone +*dark?*', size: 220 }] });
-  fx.push({ t: 64.4, type: 'fadeout', dur: .5, until: 64.9 });
+  fx.push({ t: 61, type: 'whip', dir: -1, dur: .3, amount: 280 });
+  texts.push({ x: .075, y: .16, out: 62.88, lines: [{ text: 'Would you be able to', size: 58 }, { text: '+*sleep* *peacefully,*', size: 180 }] });
+  texts.push({ x: .075, y: .16, out: 66.35, lines: [{ text: 'knowing that the entire', size: 58 }, { text: 'universe above you', size: 58 }, { text: 'had gone +*dark?*', size: 220 }] });
+  fx.push({ t: 66.3, type: 'fadeout', dur: .5, until: 66.8 });
   cues.push({ t: dark2, type: 'impact', amount: .45 });
   score(dark2, .1);
 
   // ---------------------------------------------------------------- 18. end card
-  shots.push({ name: 'end card', t0: 64.9, t1: 66.9, palette: 'void',
+  shots.push({ name: 'end card', t0: 66.8, t1: 68.8, palette: 'void',
     cam: move({ pos: [0, 0, 0], look: [0, 900, -9000], fov: 42 }, { pos: [0, 0, 0], look: [0, 960, -9000], fov: 39 }),
-    run({ world, stars }, lt, sp, t) { world.fx.planetMul = 0; stars.set({ opacity: .8, kill: -100, revive: 65.0, reviveDur: 1.2 }); } });
-  fx.push({ t: 64.9, type: 'dark', dur: .05, fade: .5, sound: false }, { t: 66.35, type: 'fadeout', dur: .5 });
-  texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 66.9, lines: [{ text: '=Imaginary=@65.15', size: 200 }, { text: '+*World.*@65.4', size: 240 }] });
-  cues.push({ t: 65.1, type: 'shimmer', dur: 1.8 });
-  score(64.9, .55);
+    run({ world, stars }, lt, sp, t) { world.fx.planetMul = 0; stars.set({ opacity: .8, kill: -100, revive: 66.9, reviveDur: 1.2 }); } });
+  fx.push({ t: 66.8, type: 'dark', dur: .05, fade: .5, sound: false }, { t: 68.25, type: 'fadeout', dur: .5 });
+  texts.push({ x: .5, y: .5, align: 'center', anchor: 'middle', out: 68.8, lines: [{ text: '=Imaginary=@67.05', size: 200 }, { text: '+*World.*@67.3', size: 240 }] });
+  cues.push({ t: 67, type: 'shimmer', dur: 1.8 });
+  score(66.8, .55);
 
-  return { title: 'What if every star disappeared?', duration: 66.9, fps: 60, mood: 'dark', shots, fx, texts, cues };
+  return { title: 'What if every star disappeared?', duration: 68.8, fps: 60, mood: 'dark', shots, fx, texts, cues };
 }
 
 function move(a, b, ease = sineInOut) {
