@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Motion reel</title>
+<link rel="stylesheet" href="src/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "/node_modules/three/build/three.module.js",
+  "three/addons/": "/node_modules/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="whip" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur id="whipBlur" stdDeviation="0 0"/>
+  </filter>
+</svg>
+<div id="stage">
+  <div id="frame">
+    <canvas id="gl"></canvas>
+    <div id="ui"></div>
+    <div id="type"></div>
+    <div id="wipe"></div>
+  </div>
+  <div id="grain"></div>
+  <div id="vignette"></div>
+  <div id="flash"></div>
+</div>
+<div id="hud"></div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

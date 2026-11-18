@@ -1,0 +1,6 @@
+node_modules/
+work/
+out.mp4
+out-small.mp4
+*.wav
+!**/assets/*.wav

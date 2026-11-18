@@ -1,0 +1,12 @@
+{
+  "name": "motion-reel-engine",
+  "private": true,
+  "type": "module",
+  "scripts": { "serve": "node server.mjs 8123" },
+  "dependencies": {
+    "three": "0.170.0",
+    "@fontsource/inter": "5.1.0",
+    "@fontsource/inter-tight": "5.1.0",
+    "@fontsource/instrument-serif": "5.1.0"
+  }
+}
